@@ -1,0 +1,7 @@
+﻿hhg_pipe/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.log
+.env
+
