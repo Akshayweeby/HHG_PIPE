@@ -2,6 +2,7 @@ import unittest
 
 from voice.generation import GenerationService
 from voice.stt import SarvamSTT
+from voice.translation import SarvamTranslator
 
 
 class TestVoiceModules(unittest.TestCase):
@@ -35,6 +36,18 @@ class TestVoiceModules(unittest.TestCase):
         service = GenerationService(model=lambda q, p: {"answer": "Delhi", "citations": ["valid", "invented"]})
         result = service.generate("capital?", [{"chunk_text": "Delhi is the capital.", "source_id": "valid"}])
         self.assertEqual(result["citations"], ["valid"])
+
+    def test_translation_mock(self):
+        translator = SarvamTranslator(transport=lambda payload: {"translated_text": "भारत की राजधानी क्या है?", "source_language_code": "en-IN"})
+        result = translator.translate("What is the capital of India?")
+        self.assertEqual(result["translated_text"], "भारत की राजधानी क्या है?")
+        self.assertEqual(result["source_language_code"], "en-IN")
+
+    def test_translation_error_is_safe(self):
+        translator = SarvamTranslator(transport=lambda payload: (_ for _ in ()).throw(TimeoutError("timeout")), retries=0)
+        result = translator.translate("भारत की राजधानी क्या है?")
+        self.assertEqual(result["translated_text"], result["original_text"])
+        self.assertIn("timeout", result["error"])
 
 
 if __name__ == "__main__": unittest.main()

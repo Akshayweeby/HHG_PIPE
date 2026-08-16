@@ -16,6 +16,10 @@ class MockTranscriber:
 class MockRetriever:
     def retrieve(self, query: str, k: int = 3) -> List[RetrievedChunk]:
         lower = query.lower()
+        if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं")):
+            return [RetrievedChunk("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", 1.0, "conversation")]
+        if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं")):
+            return [RetrievedChunk("मैं आपका Hindi Voice RAG assistant हूँ।", 1.0, "conversation")]
         if "no evidence" in lower or "unanswerable" in lower or "evidence नहीं" in lower:
             return []
         if "partial" in lower or "आंशिक" in lower:
@@ -29,6 +33,10 @@ class MockRetriever:
 class MockGenerator:
     def generate(self, query: str, chunks: List[RetrievedChunk]) -> GeneratedAnswer:
         lower = query.lower()
+        if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं")):
+            return GeneratedAnswer("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", ["conversation"])
+        if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं")):
+            return GeneratedAnswer("मैं आपका Hindi Voice RAG assistant हूँ।", ["conversation"])
         if "generation failure" in lower:
             raise RuntimeError("mock generation unavailable")
         if "hallucinated" in lower or "unsupported" in lower:

@@ -2,5 +2,6 @@
 
 from .generation import GenerationService, generate
 from .stt import SarvamSTT, TranscriptionResult, transcribe
+from .translation import SarvamTranslator, TranslationResult, translate
 
-__all__ = ["GenerationService", "SarvamSTT", "TranscriptionResult", "generate", "transcribe"]
+__all__ = ["GenerationService", "SarvamSTT", "TranscriptionResult", "SarvamTranslator", "TranslationResult", "generate", "transcribe", "translate"]

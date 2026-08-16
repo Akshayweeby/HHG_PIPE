@@ -28,7 +28,11 @@ class InputGuardrails:
             "unanswerable", "no evidence", "partial", "invalid citation",
             "hallucinated", "unsupported", "generation failure",
         )
-        if tokens & self.topic_terms or any(term in normalized for term in ("what is", "explain", "कैसे")) or any(term in normalized for term in evaluation_markers):
+        conversational_phrases = (
+            "hello", "hi", "नमस्ते", "how are you", "कैसे हो", "कैसे हैं",
+            "who are you", "what is your name", "तुम कौन हो", "आप कौन हैं",
+        )
+        if tokens & self.topic_terms or any(term in normalized for term in ("what is", "explain", "कैसे")) or any(term in normalized for term in evaluation_markers) or any(term in normalized for term in conversational_phrases):
             return GuardrailDecision(True, "ALLOW")
         return GuardrailDecision(False, "BLOCK_OFF_TOPIC", "यह सवाल इस डेमो के RAG विषय से बाहर है।")
 
