@@ -25,7 +25,7 @@ function updateLanguageHint() {
 function setLoading(on) { $('loading').classList.toggle('hidden', !on); $('result').classList.toggle('hidden', on); }
 async function run(audio = query.value, scenario = null) {
   setLoading(true); $('recording').textContent = '';
-  try { const res = await fetch('/api/pipeline', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ audio, demo_scenario: scenario, question_language: language.value, speak_answer: true }) }); render(await res.json()); }
+  try { const res = await fetch('/api/pipeline', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ audio, demo_scenario: scenario, answer_language: language.value, speak_answer: true }) }); render(await res.json()); }
   catch (e) { render({ state: 'ERROR', reason: e.message, timings: [] }); }
   finally { setLoading(false); }
 }

@@ -37,14 +37,19 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(404, {"error": "not found"})
         try:
             length = int(self.headers.get("Content-Length", 0)); payload = json.loads(self.rfile.read(length) or b"{}")
-            question_language = normalize_language(payload.get("question_language", "en"))
+            # The selected response language is independent from the language
+            # used to ask the question. Keep question_language as a backward-
+            # compatible alias for existing clients.
+            response_language = normalize_language(
+                payload.get("answer_language", payload.get("question_language", "en"))
+            )
             result = runner.run(AudioInput(str(payload.get("audio", "")), payload.get("demo_scenario"))).to_dict()
             if result.get("answer"):
-                result.update(answer_language.translate_answer(result["answer"], question_language))
+                result.update(answer_language.translate_answer(result["answer"], response_language))
             else:
-                result["answer_language"] = answer_language.target_for(question_language)
+                result["answer_language"] = answer_language.target_for(response_language)
             if result.get("reason"):
-                translated_reason = answer_language.translate_answer(result["reason"], question_language)
+                translated_reason = answer_language.translate_answer(result["reason"], response_language)
                 result["reason"] = translated_reason["answer"]
             if result.get("answer") and payload.get("speak_answer", True):
                 result["answer_audio"] = tts.synthesize(

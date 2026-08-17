@@ -20,7 +20,6 @@ class TestPipeline(unittest.TestCase):
         self.assertIn("ठीक हूँ", how.answer)
         identity = self.runner.run(AudioInput("तुम कौन हो?"))
         self.assertEqual(identity.state.value, "ALLOW")
-<<<<<<< HEAD
         self.assertIn("कृत्रिम बुद्धिमत्ता सहायक", identity.answer)
 
     def test_regional_conversational_questions_are_supported(self):
@@ -28,8 +27,6 @@ class TestPipeline(unittest.TestCase):
         marathi = self.runner.run(AudioInput("तुम्ही कोण आहात?"))
         self.assertEqual(kannada.state.value, "ALLOW")
         self.assertEqual(marathi.state.value, "ALLOW")
-=======
-        self.assertIn("Hindi Voice RAG", identity.answer)
         shorthand = self.runner.run(AudioInput("how r u?"))
         self.assertEqual(shorthand.state.value, "ALLOW")
 
@@ -37,7 +34,6 @@ class TestPipeline(unittest.TestCase):
         result = self.runner.run(AudioInput("what do you mean by flower?"))
         self.assertEqual(result.state.value, "NO_EVIDENCE")
         self.assertIn("प्रमाण", result.reason)
->>>>>>> 53b83f651084540b296c86346f5e2b41b6feb68f
 
     def test_low_confidence(self):
         result = self.runner.run(AudioInput("", "low_confidence"))

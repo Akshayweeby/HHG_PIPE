@@ -13,7 +13,6 @@ class AnswerLanguageAdapter:
         ("hi-IN", "मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।"): "मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।",
         ("en-IN", "RAG pipeline relevant documents retrieve करके उनके context पर grounded उत्तर generate करता है।"): "The RAG pipeline retrieves relevant documents and generates a grounded answer from their context.",
         ("hi-IN", "RAG pipeline relevant documents retrieve करके उनके context पर grounded उत्तर generate करता है।"): "आरएजी पाइपलाइन संबंधित दस्तावेज़ों को खोजकर उनके संदर्भ के आधार पर उत्तर तैयार करती है।",
-<<<<<<< HEAD
         ("kn-IN", "मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।"): "ನಾನು ಚೆನ್ನಾಗಿದ್ದೇನೆ ಮತ್ತು ನಿಮಗೆ ಸಹಾಯ ಮಾಡಲು ಸಿದ್ಧನಿದ್ದೇನೆ.",
         ("mr-IN", "मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।"): "मी ठीक आहे आणि तुम्हाला मदत करण्यासाठी तयार आहे.",
         ("kn-IN", "मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।"): "ನಾನು ನಿಮ್ಮ ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆಯ ಸಹಾಯಕನಾಗಿದ್ದೇನೆ.",
@@ -36,10 +35,8 @@ class AnswerLanguageAdapter:
         ("mr-IN", "grounded by all configured signals"): "सर्व पडताळणी संकेतांच्या आधारे उत्तराची पुष्टी झाली आहे.",
         ("kn-IN", "मैं आपका AI assistant हूँ।"): "ನಾನು ನಿಮ್ಮ ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆ ಸಹಾಯಕ.",
         ("mr-IN", "मैं आपका AI assistant हूँ।"): "मी तुमचा कृत्रिम बुद्धिमत्ता सहाय्यक आहे.",
-=======
         ("hi-IN", "A flower is the reproductive part of a flowering plant and helps the plant produce seeds."): "फूल पुष्पीय पौधे का प्रजनन अंग होता है और पौधे को बीज बनाने में मदद करता है।",
         ("en-IN", "A flower is the reproductive part of a flowering plant and helps the plant produce seeds."): "A flower is the reproductive part of a flowering plant and helps the plant produce seeds.",
->>>>>>> 53b83f651084540b296c86346f5e2b41b6feb68f
     }
 
     def __init__(self, translator: SarvamTranslator | None = None):

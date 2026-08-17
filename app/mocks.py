@@ -16,11 +16,7 @@ class MockTranscriber:
 class MockRetriever:
     def retrieve(self, query: str, k: int = 3) -> List[RetrievedChunk]:
         lower = query.lower()
-<<<<<<< HEAD
-        if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं", "ಹೇಗಿದ್ದೀರಿ", "ನೀವು ಹೇಗಿದ್ದೀರಿ", "तुम्ही कसे आहात")):
-=======
-        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं")):
->>>>>>> 53b83f651084540b296c86346f5e2b41b6feb68f
+        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं", "ಹೇಗಿದ್ದೀರಿ", "ನೀವು ಹೇಗಿದ್ದೀರಿ", "तुम्ही कसे आहात")):
             return [RetrievedChunk("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", 1.0, "conversation")]
         if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं", "ನೀವು ಯಾರು", "ನಿಮ್ಮ ಹೆಸರೇನು", "तुम्ही कोण आहात", "तुमचं नाव काय")):
             return [RetrievedChunk("मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।", 1.0, "conversation")]
@@ -39,11 +35,7 @@ class MockRetriever:
 class MockGenerator:
     def generate(self, query: str, chunks: List[RetrievedChunk]) -> GeneratedAnswer:
         lower = query.lower()
-<<<<<<< HEAD
-        if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं", "ಹೇಗಿದ್ದೀರಿ", "ನೀವು ಹೇಗಿದ್ದೀರಿ", "तुम्ही कसे आहात")):
-=======
-        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं")):
->>>>>>> 53b83f651084540b296c86346f5e2b41b6feb68f
+        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं", "ಹೇಗಿದ್ದೀರಿ", "ನೀವು ಹೇಗಿದ್ದೀರಿ", "तुम्ही कसे आहात")):
             return GeneratedAnswer("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", ["conversation"])
         if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं", "ನೀವು ಯಾರು", "ನಿಮ್ಮ ಹೆಸರೇನು", "तुम्ही कोण आहात", "तुमचं नाव काय")):
             return GeneratedAnswer("मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।", ["conversation"])
@@ -56,4 +48,3 @@ class MockGenerator:
         if "partial" in lower or "आंशिक" in lower:
             return GeneratedAnswer("RAG retrieval करता है और यह हमेशा live data भी देता है।", ["doc-rag-01"])
         return GeneratedAnswer("RAG pipeline relevant documents retrieve करके उनके context पर grounded उत्तर generate करता है।", [c.source_id for c in chunks])
-
