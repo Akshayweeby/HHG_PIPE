@@ -3,6 +3,7 @@ import unittest
 from voice.generation import GenerationService
 from voice.stt import SarvamSTT
 from voice.translation import SarvamTranslator
+from voice.answer_language import AnswerLanguageAdapter
 
 
 class TestVoiceModules(unittest.TestCase):
@@ -48,6 +49,12 @@ class TestVoiceModules(unittest.TestCase):
         result = translator.translate("भारत की राजधानी क्या है?")
         self.assertEqual(result["translated_text"], result["original_text"])
         self.assertIn("timeout", result["error"])
+
+    def test_answer_language_switch_offline(self):
+        adapter = AnswerLanguageAdapter(SarvamTranslator(transport=lambda _: (_ for _ in ()).throw(TimeoutError("offline")), retries=0))
+        result = adapter.translate_answer("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", "en")
+        self.assertEqual(result["answer_language"], "hi-IN")
+        self.assertIn("ठीक हूँ", result["answer"])
 
 
 if __name__ == "__main__": unittest.main()

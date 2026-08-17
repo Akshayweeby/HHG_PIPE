@@ -6,9 +6,11 @@ from pathlib import Path
 
 from app.models import AudioInput
 from app.pipeline import PipelineRunner
+from voice.answer_language import AnswerLanguageAdapter
 
 ROOT = Path(__file__).parent
 runner = PipelineRunner()
+answer_language = AnswerLanguageAdapter()
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -32,7 +34,15 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(404, {"error": "not found"})
         try:
             length = int(self.headers.get("Content-Length", 0)); payload = json.loads(self.rfile.read(length) or b"{}")
-            return self._send(200, runner.run(AudioInput(str(payload.get("audio", "")), payload.get("demo_scenario"))).to_dict())
+            question_language = str(payload.get("question_language", "en")).lower()
+            if question_language not in {"hi", "en"}:
+                question_language = "en"
+            result = runner.run(AudioInput(str(payload.get("audio", "")), payload.get("demo_scenario"))).to_dict()
+            if result.get("state") == "ALLOW" and result.get("answer"):
+                result.update(answer_language.translate_answer(result["answer"], question_language))
+            else:
+                result["answer_language"] = answer_language.target_for(question_language)
+            return self._send(200, result)
         except Exception as exc:
             return self._send(400, {"error": str(exc)})
 
