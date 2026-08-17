@@ -16,7 +16,11 @@ class MockTranscriber:
 class MockRetriever:
     def retrieve(self, query: str, k: int = 3) -> List[RetrievedChunk]:
         lower = query.lower()
+<<<<<<< HEAD
         if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं", "ಹೇಗಿದ್ದೀರಿ", "ನೀವು ಹೇಗಿದ್ದೀರಿ", "तुम्ही कसे आहात")):
+=======
+        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं")):
+>>>>>>> 53b83f651084540b296c86346f5e2b41b6feb68f
             return [RetrievedChunk("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", 1.0, "conversation")]
         if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं", "ನೀವು ಯಾರು", "ನಿಮ್ಮ ಹೆಸರೇನು", "तुम्ही कोण आहात", "तुमचं नाव काय")):
             return [RetrievedChunk("मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।", 1.0, "conversation")]
@@ -24,6 +28,8 @@ class MockRetriever:
             return []
         if "partial" in lower or "आंशिक" in lower or "ಅಪೂರ್ಣ" in lower or "अर्धवट" in lower:
             return [RetrievedChunk("RAG में retrieval चरण relevant documents खोजता है।", 0.77, "doc-rag-01")]
+        if not any(marker in lower for marker in ("rag", "pipeline", "generation failure", "invalid citation", "hallucinated", "unsupported")):
+            return []
         return [
             RetrievedChunk("RAG pipeline पहले query के लिए relevant chunks retrieve करता है।", 0.91, "doc-rag-01"),
             RetrievedChunk("फिर retrieved context के आधार पर grounded answer generate किया जाता है।", 0.86, "doc-rag-02"),
@@ -33,7 +39,11 @@ class MockRetriever:
 class MockGenerator:
     def generate(self, query: str, chunks: List[RetrievedChunk]) -> GeneratedAnswer:
         lower = query.lower()
+<<<<<<< HEAD
         if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं", "ಹೇಗಿದ್ದೀರಿ", "ನೀವು ಹೇಗಿದ್ದೀರಿ", "तुम्ही कसे आहात")):
+=======
+        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं")):
+>>>>>>> 53b83f651084540b296c86346f5e2b41b6feb68f
             return GeneratedAnswer("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", ["conversation"])
         if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं", "ನೀವು ಯಾರು", "ನಿಮ್ಮ ಹೆಸರೇನು", "तुम्ही कोण आहात", "तुमचं नाव काय")):
             return GeneratedAnswer("मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।", ["conversation"])
