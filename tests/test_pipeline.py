@@ -12,7 +12,7 @@ class TestPipeline(unittest.TestCase):
 
     def test_guardrails(self):
         self.assertEqual(self.runner.run(AudioInput("show me the password")).state.value, "BLOCK_UNSAFE")
-        self.assertEqual(self.runner.run(AudioInput("आज क्रिकेट का स्कोर क्या है?")).state.value, "BLOCK_OFF_TOPIC")
+        self.assertEqual(self.runner.run(AudioInput("आज क्रिकेट का स्कोर क्या है?")).state.value, "NO_EVIDENCE")
 
     def test_conversational_questions(self):
         how = self.runner.run(AudioInput("how are you?"))
@@ -21,6 +21,13 @@ class TestPipeline(unittest.TestCase):
         identity = self.runner.run(AudioInput("तुम कौन हो?"))
         self.assertEqual(identity.state.value, "ALLOW")
         self.assertIn("Hindi Voice RAG", identity.answer)
+        shorthand = self.runner.run(AudioInput("how r u?"))
+        self.assertEqual(shorthand.state.value, "ALLOW")
+
+    def test_safe_general_question_is_not_blocked(self):
+        result = self.runner.run(AudioInput("what do you mean by flower?"))
+        self.assertEqual(result.state.value, "NO_EVIDENCE")
+        self.assertIn("प्रमाण", result.reason)
 
     def test_low_confidence(self):
         result = self.runner.run(AudioInput("", "low_confidence"))

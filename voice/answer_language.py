@@ -13,6 +13,8 @@ class AnswerLanguageAdapter:
         ("hi-IN", "मैं आपका Hindi Voice RAG assistant हूँ।"): "मैं आपका हिंदी वॉइस आरएजी सहायक हूँ।",
         ("en-IN", "RAG pipeline relevant documents retrieve करके उनके context पर grounded उत्तर generate करता है।"): "The RAG pipeline retrieves relevant documents and generates a grounded answer from their context.",
         ("hi-IN", "RAG pipeline relevant documents retrieve करके उनके context पर grounded उत्तर generate करता है।"): "आरएजी पाइपलाइन संबंधित दस्तावेज़ों को खोजकर उनके संदर्भ के आधार पर उत्तर तैयार करती है।",
+        ("hi-IN", "A flower is the reproductive part of a flowering plant and helps the plant produce seeds."): "फूल पुष्पीय पौधे का प्रजनन अंग होता है और पौधे को बीज बनाने में मदद करता है।",
+        ("en-IN", "A flower is the reproductive part of a flowering plant and helps the plant produce seeds."): "A flower is the reproductive part of a flowering plant and helps the plant produce seeds.",
     }
 
     def __init__(self, translator: SarvamTranslator | None = None):

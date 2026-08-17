@@ -16,7 +16,7 @@ class MockTranscriber:
 class MockRetriever:
     def retrieve(self, query: str, k: int = 3) -> List[RetrievedChunk]:
         lower = query.lower()
-        if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं")):
+        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं")):
             return [RetrievedChunk("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", 1.0, "conversation")]
         if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं")):
             return [RetrievedChunk("मैं आपका Hindi Voice RAG assistant हूँ।", 1.0, "conversation")]
@@ -24,6 +24,8 @@ class MockRetriever:
             return []
         if "partial" in lower or "आंशिक" in lower:
             return [RetrievedChunk("RAG में retrieval चरण relevant documents खोजता है।", 0.77, "doc-rag-01")]
+        if not any(marker in lower for marker in ("rag", "pipeline", "generation failure", "invalid citation", "hallucinated", "unsupported")):
+            return []
         return [
             RetrievedChunk("RAG pipeline पहले query के लिए relevant chunks retrieve करता है।", 0.91, "doc-rag-01"),
             RetrievedChunk("फिर retrieved context के आधार पर grounded answer generate किया जाता है।", 0.86, "doc-rag-02"),
@@ -33,7 +35,7 @@ class MockRetriever:
 class MockGenerator:
     def generate(self, query: str, chunks: List[RetrievedChunk]) -> GeneratedAnswer:
         lower = query.lower()
-        if any(phrase in lower for phrase in ("how are you", "कैसे हो", "कैसे हैं")):
+        if any(phrase in lower for phrase in ("how are you", "how are u", "how r u", "hru", "कैसे हो", "कैसे हैं")):
             return GeneratedAnswer("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", ["conversation"])
         if any(phrase in lower for phrase in ("who are you", "what is your name", "तुम कौन हो", "आप कौन हैं")):
             return GeneratedAnswer("मैं आपका Hindi Voice RAG assistant हूँ।", ["conversation"])
