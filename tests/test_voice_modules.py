@@ -4,6 +4,7 @@ from voice.generation import GenerationService
 from voice.stt import SarvamSTT
 from voice.translation import SarvamTranslator
 from voice.answer_language import AnswerLanguageAdapter
+from voice.tts import SarvamTTS
 
 
 class TestVoiceModules(unittest.TestCase):
@@ -53,8 +54,35 @@ class TestVoiceModules(unittest.TestCase):
     def test_answer_language_switch_offline(self):
         adapter = AnswerLanguageAdapter(SarvamTranslator(transport=lambda _: (_ for _ in ()).throw(TimeoutError("offline")), retries=0))
         result = adapter.translate_answer("मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।", "en")
+        self.assertEqual(result["answer_language"], "en-IN")
+        self.assertIn("I am fine", result["answer"])
+
+    def test_hindi_answer_stays_hindi_without_translation_service(self):
+        answer = "मैं ठीक हूँ और आपकी मदद करने के लिए तैयार हूँ।"
+        adapter = AnswerLanguageAdapter(SarvamTranslator(transport=lambda _: (_ for _ in ()).throw(TimeoutError("offline")), retries=0))
+        result = adapter.translate_answer(answer, "hi")
         self.assertEqual(result["answer_language"], "hi-IN")
-        self.assertIn("ठीक हूँ", result["answer"])
+        self.assertEqual(result["answer"], answer)
+
+    def test_answer_language_supports_kannada_and_marathi(self):
+        adapter = AnswerLanguageAdapter(SarvamTranslator(transport=lambda _: (_ for _ in ()).throw(TimeoutError("offline")), retries=0))
+        kannada = adapter.translate_answer("मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।", "kn")
+        marathi = adapter.translate_answer("मैं आपका कृत्रिम बुद्धिमत्ता सहायक हूँ।", "mr")
+        self.assertEqual(kannada["answer_language"], "kn-IN")
+        self.assertIn("ಸಹಾಯಕನಾಗಿದ್ದೇನೆ", kannada["answer"])
+        self.assertEqual(marathi["answer_language"], "mr-IN")
+        self.assertIn("कृत्रिम", marathi["answer"])
+
+    def test_tts_success_and_safe_missing_key(self):
+        tts = SarvamTTS(transport=lambda _: {"audios": ["V0FWRQ=="]})
+        result = tts.synthesize("नमस्ते", language_code="mr-IN")
+        self.assertEqual(result["audio_base64"], "V0FWRQ==")
+        self.assertEqual(result["language_code"], "mr-IN")
+        offline = SarvamTTS(api_key=None, transport=lambda _: (_ for _ in ()).throw(RuntimeError("offline")))
+        self.assertIsNone(offline.synthesize("नमस्ते", language_code="kn-IN")["audio_base64"])
+
+    def test_tts_voice_map(self):
+        self.assertEqual(set(SarvamTTS.EDGE_VOICES), {"en-IN", "hi-IN", "kn-IN", "mr-IN"})
 
 
 if __name__ == "__main__": unittest.main()

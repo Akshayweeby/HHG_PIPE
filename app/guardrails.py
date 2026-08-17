@@ -31,6 +31,8 @@ class InputGuardrails:
         conversational_phrases = (
             "hello", "hi", "नमस्ते", "how are you", "कैसे हो", "कैसे हैं",
             "who are you", "what is your name", "तुम कौन हो", "आप कौन हैं",
+            "ನೀವು ಯಾರು", "ನಿಮ್ಮ ಹೆಸರೇನು", "ಹೇಗಿದ್ದೀರಿ", "ನೀವು ಹೇಗಿದ್ದೀರಿ",
+            "तुम्ही कोण आहात", "तुमचं नाव काय", "तुम्ही कसे आहात",
         )
         if tokens & self.topic_terms or any(term in normalized for term in ("what is", "explain", "कैसे")) or any(term in normalized for term in evaluation_markers) or any(term in normalized for term in conversational_phrases):
             return GuardrailDecision(True, "ALLOW")

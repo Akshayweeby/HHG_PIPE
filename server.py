@@ -7,10 +7,13 @@ from pathlib import Path
 from app.models import AudioInput
 from app.pipeline import PipelineRunner
 from voice.answer_language import AnswerLanguageAdapter
+from voice.languages import normalize_language
+from voice.tts import SarvamTTS
 
 ROOT = Path(__file__).parent
 runner = PipelineRunner()
 answer_language = AnswerLanguageAdapter()
+tts = SarvamTTS()
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -34,14 +37,19 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(404, {"error": "not found"})
         try:
             length = int(self.headers.get("Content-Length", 0)); payload = json.loads(self.rfile.read(length) or b"{}")
-            question_language = str(payload.get("question_language", "en")).lower()
-            if question_language not in {"hi", "en"}:
-                question_language = "en"
+            question_language = normalize_language(payload.get("question_language", "en"))
             result = runner.run(AudioInput(str(payload.get("audio", "")), payload.get("demo_scenario"))).to_dict()
-            if result.get("state") == "ALLOW" and result.get("answer"):
+            if result.get("answer"):
                 result.update(answer_language.translate_answer(result["answer"], question_language))
             else:
                 result["answer_language"] = answer_language.target_for(question_language)
+            if result.get("reason"):
+                translated_reason = answer_language.translate_answer(result["reason"], question_language)
+                result["reason"] = translated_reason["answer"]
+            if result.get("answer") and payload.get("speak_answer", True):
+                result["answer_audio"] = tts.synthesize(
+                    result["answer"], language_code=result["answer_language"]
+                )
             return self._send(200, result)
         except Exception as exc:
             return self._send(400, {"error": str(exc)})

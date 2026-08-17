@@ -18,9 +18,10 @@ def normalize_record(record: dict[str, Any], row_id: int) -> dict[str, Any]:
         selected = int(bool(int(selected))) if not isinstance(selected, bool) else int(selected)
     except (TypeError, ValueError):
         selected = int(str(selected).lower() in {"true", "yes", "relevant"})
+    language = str(_first(record, ("language", "language_code", "lang"), "auto"))
     return {"source_id": str(_first(record, ("source_id", "docid", "document_id", "passage_id", "id"), row_id)),
             "query": query, "passage": text, "is_selected": selected,
-            "title": str(_first(record, ("title", "document_title"), "")), "metadata": record}
+            "language": language, "title": str(_first(record, ("title", "document_title"), "")), "metadata": record}
 
 def load_records(path: str | Path | None = None, *, dataset_name: str = "microsoft/ms_marco",
                  split: str = "validation", limit: int = 5000) -> list[dict[str, Any]]:
@@ -49,4 +50,4 @@ def mock_records() -> list[dict[str, Any]]:
             ("doc-3", "The sun is a star at the center of the solar system.", "What is at the center of solar system?"),
             ("doc-4", "पौधों में प्रकाश संश्लेषण के लिए सूर्य का प्रकाश आवश्यक है।", "plants को sunlight क्यों चाहिए?"),
             ("doc-5", "भारत का संविधान नागरिकों को मौलिक अधिकार देता है।", "fundamental rights किससे मिलते हैं?")]
-    return [{"source_id": s, "passage": p, "query": q, "is_selected": 1, "title": "", "metadata": {}} for s, p, q in rows]
+    return [{"source_id": s, "passage": p, "query": q, "is_selected": 1, "language": "auto", "title": "", "metadata": {}} for s, p, q in rows]
