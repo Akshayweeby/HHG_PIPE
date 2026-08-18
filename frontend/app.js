@@ -1,4 +1,4 @@
-const state = { questionLanguage: "en", answerLanguage: "en", lastAnswer: "" };
+const state = { questionLanguage: "en", answerLanguage: "en", voiceGender: "female", lastAnswer: "" };
 const $ = (id) => document.getElementById(id);
 const API_URL = window.location.port === "8000"
   ? "/api/pipeline"
@@ -51,8 +51,14 @@ voiceControls.className = "voice-controls";
 voiceControls.innerHTML = `
   <button id="voice-input" type="button">🎙 Ask by voice</button>
   <button id="read-answer" type="button" disabled>🔊 Read answer</button>
+  <label class="voice-choice">Voice <select id="voice-gender">
+    <option value="female">Female</option><option value="male">Male</option>
+  </select></label>
   <span id="voice-status">Type or use your microphone</span>`;
 $("question")?.insertAdjacentElement("afterend", voiceControls);
+$("voice-gender").addEventListener("change", (event) => {
+  state.voiceGender = event.target.value;
+});
 
 function setQuestionLanguage(language) {
   state.questionLanguage = language;
@@ -156,12 +162,22 @@ function readAnswer() {
     utterance.rate = 0.92;
     const voices = synth.getVoices();
     const targetPrefix = SPEECH_CODES[state.answerLanguage].slice(0, 2).toLowerCase();
-    const preferred = voices.find((voice) => voice.lang?.toLowerCase().startsWith(targetPrefix));
+    const languageVoices = voices.filter((voice) => voice.lang?.toLowerCase().startsWith(targetPrefix));
+    const fallbackVoices = voices.filter((voice) => voice.lang?.toLowerCase().startsWith("hi"))
+      .concat(voices.filter((voice) => voice.lang?.toLowerCase().startsWith("en")));
+    const availableVoices = languageVoices.length ? languageVoices : fallbackVoices.length ? fallbackVoices : voices;
+    const genderWords = state.voiceGender === "female"
+      ? ["female", "woman", "zira", "susan", "samantha", "karen", "veena", "heera"]
+      : ["male", "man", "david", "mark", "daniel", "ravi", "hemant", "alex"];
+    const preferred = availableVoices.find((voice) =>
+      genderWords.some((word) => voice.name.toLowerCase().includes(word)));
+    const selectedVoice = preferred || availableVoices[0];
     const fallback = voices.find((voice) => voice.lang?.toLowerCase().startsWith("hi"))
       || voices.find((voice) => voice.lang?.toLowerCase().startsWith("en"))
       || voices[0];
-    if (preferred) {
-      utterance.voice = preferred;
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      if (!languageVoices.length) utterance.lang = selectedVoice.lang || "en-IN";
     } else if (fallback) {
       // Many systems do not ship kn-IN/mr-IN voices. Use an installed voice
       // so the answer remains audible rather than failing silently.
@@ -169,9 +185,7 @@ function readAnswer() {
       utterance.lang = fallback.lang || "en-IN";
     }
     utterance.onstart = () => {
-      $("voice-status").textContent = preferred
-        ? `Reading in ${LANGUAGE_LABELS[state.answerLanguage]}…`
-        : `Reading with an available voice…`;
+      $("voice-status").textContent = `Reading with ${state.voiceGender} voice…`;
     };
     utterance.onend = () => { $("voice-status").textContent = "Ready"; };
     utterance.onerror = () => { $("voice-status").textContent = "Could not read the answer aloud."; };
