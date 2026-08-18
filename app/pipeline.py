@@ -48,9 +48,9 @@ class PipelineRunner:
             return self._finish(PipelineResponse(PipelineState(decision.state), transcript=transcript, reason=decision.reason), timings, total_start, total_iso)
         chunks, error = self._stage("retrieval", lambda: self.retriever.retrieve(transcript.text, 3), timings)
         if error:
-            return self._finish(PipelineResponse(PipelineState.NO_EVIDENCE, transcript=transcript, reason="प्रमाण उपलब्ध नहीं है। मैं इस प्रश्न का उत्तर नहीं दे सकता।", error=error), timings, total_start, total_iso)
+            return self._finish(PipelineResponse(PipelineState.NO_EVIDENCE, transcript=transcript, answer="मुझे नहीं पता।", reason="प्रमाण उपलब्ध नहीं है। मैं इस प्रश्न का उत्तर नहीं दे सकता।", error=error), timings, total_start, total_iso)
         if not chunks:
-            return self._finish(PipelineResponse(PipelineState.NO_EVIDENCE, transcript=transcript, reason="प्रमाण उपलब्ध नहीं है। मैं इस प्रश्न का उत्तर नहीं दे सकता।"), timings, total_start, total_iso)
+            return self._finish(PipelineResponse(PipelineState.NO_EVIDENCE, transcript=transcript, answer="मुझे नहीं पता।", reason="प्रमाण उपलब्ध नहीं है। मैं इस प्रश्न का उत्तर नहीं दे सकता।"), timings, total_start, total_iso)
         generated, error = self._stage("generation", lambda: self.generator.generate(transcript.text, chunks), timings)
         if error:
             return self._finish(PipelineResponse(PipelineState.ERROR, transcript=transcript, reason="उत्तर बनाते समय समस्या हुई।", error=error), timings, total_start, total_iso)

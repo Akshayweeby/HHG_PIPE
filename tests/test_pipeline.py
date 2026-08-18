@@ -51,6 +51,12 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual(result.state.value, "ALLOW")
         self.assertIn("RAG", result.answer)
 
+    def test_unknown_detail_inside_supported_topic_returns_no_evidence(self):
+        result = self.runner.run(AudioInput("What is shraddha in RAG pipeline?"))
+        self.assertEqual(result.state.value, "NO_EVIDENCE")
+        self.assertEqual(result.answer, "मुझे नहीं पता।")
+        self.assertIn("प्रमाण", result.reason)
+
     def test_low_confidence(self):
         result = self.runner.run(AudioInput("", "low_confidence"))
         self.assertEqual(result.state.value, "REPEAT_LOW_CONFIDENCE")

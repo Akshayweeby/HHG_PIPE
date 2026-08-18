@@ -31,12 +31,20 @@ class AnswerLanguageAdapter:
         is_conversation = "how are" in lower or "ठीक" in text or "à¤ à¥€à¤•" in text
         is_flower = "flower" in lower
         is_grounding = "grounded by all configured signals" in lower
+        is_unknown = "मुझे नहीं पता" in text or "i don't know" in lower or "i dont know" in lower
         if is_grounding:
             return {
                 "en-IN": "Grounded by all configured signals.",
                 "hi-IN": "सभी निर्धारित संकेतों के आधार पर प्रमाणित उत्तर।",
                 "kn-IN": "ಎಲ್ಲಾ ನಿಗದಿತ ಸಂಕೇತಗಳ ಆಧಾರದ ಮೇಲೆ ಉತ್ತರವನ್ನು ಪರಿಶೀಲಿಸಲಾಗಿದೆ.",
                 "mr-IN": "सर्व निर्धारित संकेतांच्या आधारे उत्तराची खात्री केली आहे.",
+            }[target]
+        if is_unknown:
+            return {
+                "en-IN": "I don't know based on the available context.",
+                "hi-IN": "उपलब्ध संदर्भ के आधार पर मुझे नहीं पता।",
+                "kn-IN": "ಲಭ್ಯವಿರುವ ಸಂದರ್ಭದ ಆಧಾರದ ಮೇಲೆ ನನಗೆ ತಿಳಿದಿಲ್ಲ.",
+                "mr-IN": "उपलब्ध संदर्भाच्या आधारे मला माहित नाही.",
             }[target]
         if is_rag:
             return {

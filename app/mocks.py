@@ -41,7 +41,27 @@ class MockRetriever:
             return []
         if "partial" in lower or "आंशिक" in lower or "ಅಪೂರ್ಣ" in lower or "अर्धवट" in lower:
             return [RetrievedChunk("RAG में retrieval चरण relevant documents खोजता है।", 0.77, "doc-rag-01")]
-        if not any(marker in lower for marker in ("rag", "pipeline", "generation failure", "invalid citation", "hallucinated", "unsupported")):
+
+        # Keep the mock corpus honest.  Previously any query containing the
+        # words "RAG" or "pipeline" received the generic demo documents. That
+        # made unsupported questions such as "What is shraddha in RAG
+        # pipeline?" look answered even though the corpus contains no such
+        # information.  Only the supported demo intents (or explicit control
+        # cases used by the evaluation suite) should retrieve these chunks.
+        supported_queries = (
+            "rag pipeline क्या है",
+            "what is rag pipeline",
+            "what is the rag pipeline",
+            "how does rag pipeline work",
+            "how does the rag pipeline work",
+            "explain the rag document pipeline",
+            "rag के बारे में",
+            "rag के बारे में जानकारी",
+        )
+        evaluation_controls = ("generation failure", "invalid citation", "hallucinated", "unsupported")
+        if not any(marker in lower for marker in evaluation_controls) and not any(
+            marker in lower for marker in supported_queries
+        ):
             return []
         chunks = [RetrievedChunk("RAG pipeline पहले query के लिए relevant chunks retrieve करता है।", .91, "doc-rag-01"), RetrievedChunk("फिर retrieved context के आधार पर grounded answer generate किया जाता है।", .86, "doc-rag-02")][:k]
         if _unsupported_named_terms(query, [chunk.chunk_text for chunk in chunks]):
