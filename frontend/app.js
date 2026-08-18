@@ -1,4 +1,4 @@
-const state = { questionLanguage: "en", answerLanguage: "en", voiceGender: "female", lastAnswer: "" };
+const state = { questionLanguage: "en", answerLanguage: "en", lastAnswer: "", answerAudio: null };
 const $ = (id) => document.getElementById(id);
 const API_URL = window.location.port === "8000"
   ? "/api/pipeline"
@@ -11,6 +11,9 @@ const QUESTION_COPY = {
   kn: { hint: "ಉದಾಹರಣೆ: RAG ಪೈಪ್‌ಲೈನ್ ಎಂದರೇನು?", placeholder: "ಲಭ್ಯವಿರುವ ಮಾಹಿತಿಯ ಬಗ್ಗೆ ಏನಾದರೂ ಕೇಳಿ..." },
   mr: { hint: "उदाहरण: RAG पाइपलाइन म्हणजे काय?", placeholder: "उपलब्ध माहितीबद्दल काहीही विचारा..." },
 };
+
+const heroEyebrow = document.querySelector(".hero-copy .eyebrow");
+if (heroEyebrow) heroEyebrow.innerHTML = '<span class="pulse"></span> Multi-language voice intelligence';
 
 function languageOptions(select) {
   Object.entries(LANGUAGE_LABELS).forEach(([value, label]) => {
@@ -51,14 +54,8 @@ voiceControls.className = "voice-controls";
 voiceControls.innerHTML = `
   <button id="voice-input" type="button">🎙 Ask by voice</button>
   <button id="read-answer" type="button" disabled>🔊 Read answer</button>
-  <label class="voice-choice">Voice <select id="voice-gender">
-    <option value="female">Female</option><option value="male">Male</option>
-  </select></label>
   <span id="voice-status">Type or use your microphone</span>`;
 $("question")?.insertAdjacentElement("afterend", voiceControls);
-$("voice-gender").addEventListener("change", (event) => {
-  state.voiceGender = event.target.value;
-});
 
 function setQuestionLanguage(language) {
   state.questionLanguage = language;
@@ -81,6 +78,9 @@ function setAnswer(data) {
     ? "I don't know based on the available context."
     : data.state === "REPEAT_LOW_CONFIDENCE" ? "Please repeat your question." : "I don't know.");
   state.lastAnswer = answer;
+  state.answerAudio = data.answer_audio?.audio_base64
+    ? { base64: data.answer_audio.audio_base64, mime: data.answer_audio.mime_type || "audio/mpeg" }
+    : null;
   $("read-answer").disabled = !answer;
   const citations = (data.citations || []).map((citation) =>
     `<span class="tag">↗ ${escapeHtml(citation)}</span>`).join("");
@@ -111,7 +111,7 @@ async function ask() {
         audio: question,
         question_language: state.questionLanguage,
         answer_language: state.answerLanguage,
-        speak_answer: false,
+        speak_answer: true,
       }),
     });
     const data = await response.json();
@@ -148,6 +148,26 @@ function startVoiceInput() {
 }
 
 function readAnswer() {
+  if (state.answerAudio) {
+    const audio = new Audio(`data:${state.answerAudio.mime};base64,${state.answerAudio.base64}`);
+    audio.onplay = () => { $("voice-status").textContent = "Reading with the server voice…"; };
+    audio.onended = () => { $("voice-status").textContent = "Ready"; };
+    audio.onerror = () => {
+      state.answerAudio = null;
+      $("voice-status").textContent = "Server audio failed; trying browser voice…";
+      readWithBrowserVoice();
+    };
+    audio.play().catch(() => {
+      state.answerAudio = null;
+      $("voice-status").textContent = "Server audio needs browser permission; trying browser voice…";
+      readWithBrowserVoice();
+    });
+    return;
+  }
+  readWithBrowserVoice();
+}
+
+function readWithBrowserVoice() {
   const synth = window.speechSynthesis;
   if (!state.lastAnswer) return;
   if (!synth || !window.SpeechSynthesisUtterance) {
@@ -166,9 +186,7 @@ function readAnswer() {
     const fallbackVoices = voices.filter((voice) => voice.lang?.toLowerCase().startsWith("hi"))
       .concat(voices.filter((voice) => voice.lang?.toLowerCase().startsWith("en")));
     const availableVoices = languageVoices.length ? languageVoices : fallbackVoices.length ? fallbackVoices : voices;
-    const genderWords = state.voiceGender === "female"
-      ? ["female", "woman", "zira", "susan", "samantha", "karen", "veena", "heera"]
-      : ["male", "man", "david", "mark", "daniel", "ravi", "hemant", "alex"];
+    const genderWords = ["female", "woman", "zira", "susan", "samantha", "karen", "veena", "heera"];
     const preferred = availableVoices.find((voice) =>
       genderWords.some((word) => voice.name.toLowerCase().includes(word)));
     const selectedVoice = preferred || availableVoices[0];
@@ -185,7 +203,7 @@ function readAnswer() {
       utterance.lang = fallback.lang || "en-IN";
     }
     utterance.onstart = () => {
-      $("voice-status").textContent = `Reading with ${state.voiceGender} voice…`;
+      $("voice-status").textContent = "Reading with female voice…";
     };
     utterance.onend = () => { $("voice-status").textContent = "Ready"; };
     utterance.onerror = () => { $("voice-status").textContent = "Could not read the answer aloud."; };

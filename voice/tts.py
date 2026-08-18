@@ -106,6 +106,12 @@ class SarvamTTS:
             return None
         output_path = None
         try:
+            # Some bundled Python runtimes expose certifi as a namespace
+            # package without ``where()``. Edge TTS only needs a CA bundle.
+            import ssl
+            import certifi
+            if not hasattr(certifi, "where"):
+                certifi.where = lambda: ssl.get_default_verify_paths().cafile
             import edge_tts  # type: ignore
             with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as output:
                 output_path = output.name
