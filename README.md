@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <a href="https://hhg-pipe.vercel.app/"><img src="https://img.shields.io/badge/Live%20Demo-Open%20Website-00C7B7?logo=vercel&logoColor=white" alt="Live demo"></a>
   <a href="https://github.com/Akshayweeby/HHG_PIPE"><img src="https://img.shields.io/badge/Repository-GitHub-181717?logo=github" alt="GitHub repository"></a>
   <a href="https://github.com/Akshayweeby/HHG_PIPE/issues"><img src="https://img.shields.io/badge/Issues-Report%20a%20bug-e05d44?logo=github" alt="Report an issue"></a>
   <a href="https://github.com/Akshayweeby/HHG_PIPE/blob/main/README.md"><img src="https://img.shields.io/badge/Docs-README-5b5bd6?logo=readthedocs" alt="Documentation"></a>
@@ -24,6 +25,8 @@
 ## Overview
 
 Prana is a complete multilingual voice RAG pipeline that turns spoken questions into reliable, language-aware answers in English, Hindi, Kannada, and Marathi. It combines speech processing, multilingual retrieval, generation, citations, grounding checks, and defensive guardrails in one modular system.
+
+Try the live application: [hhg-pipe.vercel.app](https://hhg-pipe.vercel.app/)
 
 The pipeline is designed to answer only when the retrieved evidence supports the response. Unsupported, unsafe, off-topic, or low-confidence requests receive a clear fallback instead of a confident hallucination.
 
