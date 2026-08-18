@@ -1,4 +1,4 @@
-# Prana — Hindi Voice RAG
+# Prana — Multilingual Voice RAG
 
 <p align="center">
   <strong>A multilingual, voice-enabled Retrieval-Augmented Generation system with grounded answers and safety-first guardrails.</strong>
@@ -19,7 +19,7 @@
 
 ## Overview
 
-Prana is a complete Hindi-focused voice RAG pipeline that turns spoken questions into reliable, language-aware answers. It combines speech processing, multilingual retrieval, generation, citations, grounding checks, and defensive guardrails in one modular system.
+Prana is a complete multilingual voice RAG pipeline that turns spoken questions into reliable, language-aware answers in English, Hindi, Kannada, and Marathi. It combines speech processing, multilingual retrieval, generation, citations, grounding checks, and defensive guardrails in one modular system.
 
 The pipeline is designed to answer only when the retrieved evidence supports the response. Unsupported, unsafe, off-topic, or low-confidence requests receive a clear fallback instead of a confident hallucination.
 
@@ -178,12 +178,31 @@ server.py     Lightweight HTTP server and JSON API entry point
 
 Built with care by:
 
-<p align="center">
-  <a href="https://github.com/Akshayweeby"><img src="https://github.com/Akshayweeby.png?size=80" width="80px" alt="Akshayweeby"><br><sub><b>Akshayweeby</b></sub></a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/Shrak24"><img src="https://github.com/Shrak24.png?size=80" width="80px" alt="Shrak24"><br><sub><b>Shrak24</b></sub></a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://github.com/RaiderX547"><img src="https://github.com/RaiderX547.png?size=80" width="80px" alt="RaiderX547"><br><sub><b>RaiderX547</b></sub></a>
-</p>
+<table align="center">
+    <thead>
+      <tr>
+        <th>Collaborator</th>
+        <th>GitHub</th>
+        <th>Focus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Akshayweeby</td>
+        <td><a href="https://github.com/Akshayweeby">@Akshayweeby</a></td>
+        <td>Pipeline, guardrails, and frontend</td>
+      </tr>
+      <tr>
+        <td>Shrak24</td>
+        <td><a href="https://github.com/Shrak24">@Shrak24</a></td>
+        <td>Multilingual retrieval</td>
+      </tr>
+      <tr>
+        <td>RaiderX547</td>
+        <td><a href="https://github.com/RaiderX547">@RaiderX547</a></td>
+        <td>Voice and answer generation</td>
+      </tr>
+    </tbody>
+</table>
 
 <p align="center">If you find this project useful, consider giving it a ⭐ on GitHub.</p>
