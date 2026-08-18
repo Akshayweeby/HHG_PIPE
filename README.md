@@ -1,8 +1,8 @@
-<<<<<<< HEAD
+
 # Prana — Multilingual Voice RAG
-=======
+
 # Prana — Voice RAG
->>>>>>> a5e1e696e22032afb1f408320409278e640d0de6
+
 
 <p align="center">
   <strong>A multilingual, voice-enabled Retrieval-Augmented Generation system with grounded answers and safety-first guardrails.</strong>
