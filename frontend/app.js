@@ -15,6 +15,21 @@ const QUESTION_COPY = {
 const heroEyebrow = document.querySelector(".hero-copy .eyebrow");
 if (heroEyebrow) heroEyebrow.innerHTML = '<span class="pulse"></span> Multi-language voice intelligence';
 
+const hero = document.querySelector(".hero");
+if (hero && !document.querySelector(".hero-motion")) {
+  const motion = document.createElement("div");
+  motion.className = "hero-motion";
+  motion.innerHTML = `
+    <span class="motion-kicker">Ask freely</span>
+    <div class="motion-words" aria-label="Questions in every language">
+      <span>Questions in every language.</span>
+      <span>हर भाषा में पूछें।</span>
+      <span>ಪ್ರತಿ ಭಾಷೆಯಲ್ಲಿ ಕೇಳಿ.</span>
+      <span>प्रत्येक भाषेत विचारा.</span>
+    </div>`;
+  hero.prepend(motion);
+}
+
 function languageOptions(select) {
   Object.entries(LANGUAGE_LABELS).forEach(([value, label]) => {
     const option = document.createElement("option");
