@@ -41,7 +41,7 @@ class TestPipeline(unittest.TestCase):
     def test_unknown_named_rag_system_does_not_fall_back_to_generic_rag_definition(self):
         result = self.runner.run(AudioInput("What is Akshay RAG system?"))
         self.assertEqual(result.state.value, "NO_EVIDENCE")
-        self.assertFalse(result.answer)
+        self.assertIn("मुझे नहीं पता", result.answer)
 
         lowercase = self.runner.run(AudioInput("what is vikram RAG?"))
         self.assertEqual(lowercase.state.value, "NO_EVIDENCE")

@@ -52,6 +52,7 @@ class MockRetriever:
             "rag pipeline क्या है",
             "what is rag pipeline",
             "what is the rag pipeline",
+            "what is rag",
             "how does rag pipeline work",
             "how does the rag pipeline work",
             "explain the rag document pipeline",
