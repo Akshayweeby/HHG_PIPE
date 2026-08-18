@@ -10,6 +10,10 @@ class RetrievalTests(unittest.TestCase):
             self.assertLessEqual(len(result), 3)
             self.assertTrue(all({"chunk_text", "score", "source_id", "chunk_id"} <= set(x) for x in result))
 
+    def test_unsupported_named_entity_returns_no_results(self):
+        s = RetrievalSystem(mock_records(), RetrievalConfig(strategy="semantic"))
+        self.assertEqual(s.retrieve("What is Akshay RAG system?", 3), [])
+
     def test_all_strategies(self):
         records = mock_records()
         queries = [{"query": r["query"], "source_id": r["source_id"], "is_selected": 1} for r in records]

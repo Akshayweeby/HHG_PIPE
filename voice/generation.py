@@ -16,6 +16,17 @@ def _tokens(text: str) -> set[str]:
     return set(re.findall(r"[\w\u0900-\u097F]+", text.lower(), flags=re.UNICODE))
 
 
+def _context_supports_named_terms(query: str, context: str) -> bool:
+    ignored_terms = {
+        "what", "which", "who", "where", "when", "why", "how", "tell", "explain", "about", "the",
+        "rag", "pipeline", "document", "documents", "retrieval", "retrieve", "retrieves", "relevant",
+        "chunks", "context", "grounded", "answer", "generation", "question", "knowledge", "base",
+    }
+    named_terms = set(re.findall(r"[a-zA-Z]{3,}", query.lower())) - ignored_terms
+    context = context.lower()
+    return all(term in context for term in named_terms)
+
+
 @dataclass
 class GenerationService:
     """Use an injected LLM callable or a safe extractive fallback.
@@ -38,6 +49,9 @@ class GenerationService:
 
     def _fallback(self, query: str, chunks: list[Any]) -> tuple[str, list[str]]:
         if not chunks:
+            return "I don't know based on the available context.", []
+        context_text = " ".join(str(_value(chunk, "chunk_text", "")) for chunk in chunks)
+        if not _context_supports_named_terms(query, context_text):
             return "I don't know based on the available context.", []
         query_tokens = _tokens(query)
         ranked = sorted(chunks, key=lambda c: (len(query_tokens & _tokens(str(_value(c, "chunk_text", "")))), float(_value(c, "score", 0.0) or 0.0)), reverse=True)

@@ -1,8 +1,26 @@
 from __future__ import annotations
 
 from typing import List
+import re
 
 from .models import GeneratedAnswer, RetrievedChunk, Transcript
+
+
+_QUESTION_WORDS = {
+    "what", "which", "who", "where", "when", "why", "how", "is", "are", "was", "were",
+    "the", "a", "an", "this", "that", "about", "does", "do", "can", "could", "tell", "me",
+    "system", "project", "pipeline", "rag", "english", "hindi", "kannada", "marathi", "explain",
+    "retrieval", "retrieve", "retrieves", "relevant", "chunks", "context", "grounded", "answer",
+    "generation", "document", "documents", "question", "knowledge", "base",
+    "invalid", "citation", "hallucinated", "unsupported", "failure",
+}
+
+
+def _unsupported_named_terms(query: str, texts: List[str]) -> bool:
+    """Reject a generic match when a query names an entity absent from context."""
+    named_terms = set(re.findall(r"[a-zA-Z]{3,}", query.lower())) - _QUESTION_WORDS
+    context = " ".join(texts).lower()
+    return any(term not in context for term in named_terms)
 
 
 class MockTranscriber:
@@ -25,7 +43,10 @@ class MockRetriever:
             return [RetrievedChunk("RAG में retrieval चरण relevant documents खोजता है।", 0.77, "doc-rag-01")]
         if not any(marker in lower for marker in ("rag", "pipeline", "generation failure", "invalid citation", "hallucinated", "unsupported")):
             return []
-        return [RetrievedChunk("RAG pipeline पहले query के लिए relevant chunks retrieve करता है।", .91, "doc-rag-01"), RetrievedChunk("फिर retrieved context के आधार पर grounded answer generate किया जाता है।", .86, "doc-rag-02")][:k]
+        chunks = [RetrievedChunk("RAG pipeline पहले query के लिए relevant chunks retrieve करता है।", .91, "doc-rag-01"), RetrievedChunk("फिर retrieved context के आधार पर grounded answer generate किया जाता है।", .86, "doc-rag-02")][:k]
+        if _unsupported_named_terms(query, [chunk.chunk_text for chunk in chunks]):
+            return []
+        return chunks
 
 
 class MockGenerator:

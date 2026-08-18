@@ -38,6 +38,19 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual(result.state.value, "NO_EVIDENCE")
         self.assertIn("प्रमाण", result.reason)
 
+    def test_unknown_named_rag_system_does_not_fall_back_to_generic_rag_definition(self):
+        result = self.runner.run(AudioInput("What is Akshay RAG system?"))
+        self.assertEqual(result.state.value, "NO_EVIDENCE")
+        self.assertFalse(result.answer)
+
+        lowercase = self.runner.run(AudioInput("what is vikram RAG?"))
+        self.assertEqual(lowercase.state.value, "NO_EVIDENCE")
+
+    def test_generic_rag_question_remains_answerable(self):
+        result = self.runner.run(AudioInput("What is RAG?"))
+        self.assertEqual(result.state.value, "ALLOW")
+        self.assertIn("RAG", result.answer)
+
     def test_low_confidence(self):
         result = self.runner.run(AudioInput("", "low_confidence"))
         self.assertEqual(result.state.value, "REPEAT_LOW_CONFIDENCE")
