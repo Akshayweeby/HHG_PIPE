@@ -2,7 +2,7 @@ const state = { questionLanguage: "en", answerLanguage: "en", lastAnswer: "", an
 const $ = (id) => document.getElementById(id);
 const API_URL = window.location.port === "8000"
   ? "/api/pipeline"
-  : "http://127.0.0.1:8000/api/pipeline";
+  : "https://hhg-pipe.onrender.com/api/pipeline";
 const LANGUAGE_LABELS = { en: "English", hi: "हिंदी", kn: "ಕನ್ನಡ", mr: "मराठी" };
 const SPEECH_CODES = { en: "en-IN", hi: "hi-IN", kn: "kn-IN", mr: "mr-IN" };
 const QUESTION_COPY = {
