@@ -1,4 +1,4 @@
-# Prana — Hindi Voice RAG
+# Prana — Voice RAG
 
 <p align="center">
   <strong>A multilingual, voice-enabled Retrieval-Augmented Generation system with grounded answers and safety-first guardrails.</strong>
